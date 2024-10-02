@@ -74,7 +74,7 @@ __Example to find targets for **BGP EXPLOIT**__
 
 ```sh
 # Search Country/Region to attack.
-python shodan-script.py > list.txt;
+python shodan-script.py > list.txt
 
 # Create a target list with one address per line
 cat list.txt | cut -d" " -f4 >new-list.txt
